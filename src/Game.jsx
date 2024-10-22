@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import Phaser from 'phaser';
-import './index.css'
-import './App.css'
+import './index.css';
+import './App.css';
 
 const Game = () => {
   const gameRef = useRef(null);
@@ -9,8 +9,8 @@ const Game = () => {
   useEffect(() => {
     const config = {
       type: Phaser.AUTO,
-      width: window.innerWidth, // Full width
-      height: window.innerHeight, // Full height
+      width: window.innerWidth,
+      height: window.innerHeight,
       parent: gameRef.current,
       physics: {
         default: 'arcade',
@@ -26,12 +26,11 @@ const Game = () => {
     };
 
     const game = new Phaser.Game(config);
-    
-    // Balloons array
+
     const balloons = [
-      "ballon.png", "Symbol 100001.png", "Symbol 100002.png", 
-      "Symbol 100003.png", "Symbol 100004.png", "Symbol 100005.png", 
-      "Symbol 100007.png", "Symbol 100008.png", "Symbol 100009.png", 
+      "ballon.png", "Symbol 100001.png", "Symbol 100002.png",
+      "Symbol 100003.png", "Symbol 100004.png", "Symbol 100005.png",
+      "Symbol 100007.png", "Symbol 100008.png", "Symbol 100009.png",
       "Symbol 100010.png"
     ];
 
@@ -44,76 +43,62 @@ const Game = () => {
     }
 
     function preload() {
-      this.load.image('pump', '../public/Symbol 28.png');
-      this.load.image('sky', '../public/background.png');
-      // Load sound effects
-      this.load.audio('pumpSound', '../public/balloon-deflate-squeak-1-184059.mp3');
-      this.load.audio('burstSound', '../public/balloon-pop-48030.mp3');
+      this.load.image('pump', 'Symbol 28.png');
+      this.load.image('sky', 'background.png');
+      this.load.audio('pumpSound', 'balloon-deflate-squeak-1-184059.mp3');
+      this.load.audio('burstSound', 'balloon-pop-48030.mp3');
     }
 
     function create() {
-      // Main background
       this.add.image(window.innerWidth / 2, window.innerHeight / 2, 'sky').setDisplaySize(window.innerWidth, window.innerHeight);
-      // Pump position
-      const pumpX = window.innerWidth / 1.2; // Center X
-      const pumpY = window.innerHeight / 1.4; // Center Y
+      const pumpX = window.innerWidth / 1.2;
+      const pumpY = window.innerHeight / 1.4;
 
       const pump = this.add.sprite(pumpX, pumpY, 'pump').setInteractive();
       pump.setScale(0.4);
-      // Sound effects
       const pumpSound = this.sound.add('pumpSound');
       const burstSound = this.sound.add('burstSound');
 
-      // Function to create a new balloon
       const createBalloon = (x, y, previousBalloon) => {
         const balloonImage = getRandomBalloon(previousBalloon);
-        this.load.image('balloon', balloonImage); // Load the new balloon image
+        this.load.image('balloon', balloonImage);
         this.load.once('complete', () => {
           const balloon = this.physics.add.sprite(x, y, 'balloon');
           balloon.setScale(0.04);
           balloon.setInteractive();
-          balloon.setBounce(1); // Set bounce to 1 for elastic effect
-          balloon.setCollideWorldBounds(true); // Ensure balloon doesn't go out of bounds
+          balloon.setBounce(1);
+          balloon.setCollideWorldBounds(true);
+          let isBalloonInflated = false;
 
-          let isBalloonInflated = false; // Flag to check if the balloon is inflated
-
-          // Pump air into the balloon by scaling it up
           pump.on('pointerdown', () => {
-            pumpSound.play(); // Play pump sound
-
-            if (balloon.scale < 0.2) { // Limit maximum scale to keep it on the screen
+            pumpSound.play();
+            if (balloon.scale < 0.2) {
               balloon.setScale(balloon.scale + 0.05);
             } else {
               if (!isBalloonInflated) {
-                isBalloonInflated = true; // Set the flag to true
-                balloon.setVelocity(Phaser.Math.Between(-200, 200), Phaser.Math.Between(-200, 200)); // Start moving the balloon
-
-                // Create a new balloon next to the pump
-                const newBalloonX =  pumpX -110; 
-                const newBalloonY = pumpY - 25; // Above the pump
-                createBalloon(newBalloonX, newBalloonY, balloonImage); // Call the function to create a new balloon
+                isBalloonInflated = true;
+                balloon.setVelocity(Phaser.Math.Between(-200, 200), Phaser.Math.Between(-200, 200));
+                const newBalloonX = pumpX - 110;
+                const newBalloonY = pumpY - 25;
+                createBalloon(newBalloonX, newBalloonY, balloonImage);
               }
             }
           });
 
-          // Burst the balloon on tap
           balloon.on('pointerdown', () => {
-            if (isBalloonInflated) { // Check if the balloon is inflated before bursting
-              burstSound.play(); // Play burst sound
-              balloon.destroy(); // Balloon burst
+            if (isBalloonInflated) {
+              burstSound.play();
+              balloon.destroy();
             }
           });
         });
-        this.load.start(); // Start loading the new balloon image
+        this.load.start();
       };
 
-      // Create the first balloon
-      createBalloon(pumpX - 110, pumpY - 25, null); // Initial balloon position
+      createBalloon(pumpX - 110, pumpY - 25, null);
     }
 
-    function update() {
-      // Game loop logic
-    }
+    function update() {}
 
     const resize = () => {
       game.scale.resize(window.innerWidth, window.innerHeight);
@@ -127,12 +112,12 @@ const Game = () => {
     };
   }, []);
 
-  return <>
-  
-    <h1 className=' p-10'> IDZ DIGITAL PRIVATE LIMITED</h1>
-    <div ref={gameRef}></div>
-  
-  </>
+  return (
+    <>
+      <h1 className='p-10'>IDZ DIGITAL PRIVATE LIMITED</h1>
+      <div ref={gameRef}></div>
+    </>
+  );
 };
 
 export default Game;
